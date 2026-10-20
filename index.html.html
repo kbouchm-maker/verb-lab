@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Action or State? Verb Lab</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f6f3ff;--card:#fff;--tx:#1d1b2e;--mu:#625f7a;--ac:#6c4cf1;--ac2:#ff7a45;--ok:#1f9d63;--bad:#d6334a;--bd:#e0dbf5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#14121f;--card:#1f1c30;--tx:#f0eefc;--mu:#a9a5c7;--ac:#9a82ff;--ac2:#ff9466;--ok:#4cd08e;--bad:#ff6b80;--bd:#34304f}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#14121f;--card:#1f1c30;--tx:#f0eefc;--mu:#a9a5c7;--ac:#9a82ff;--ac2:#ff9466;--ok:#4cd08e;--bad:#ff6b80;--bd:#34304f}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:640px;margin:0 auto;padding:16px}
+h1{font-size:30px;line-height:1.15;margin:8px 0}h2{margin:0 0 8px;font-size:22px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:18px;margin:12px 0}
+.mu{color:var(--mu);font-size:15px}
+button,select{font:inherit;border-radius:12px;border:2px solid var(--ac);background:var(--card);color:var(--tx);padding:12px 16px;cursor:pointer;min-height:48px}
+button.p{background:var(--ac);color:#fff}
+button:disabled{opacity:.5}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.row>*{flex:1}
+.bar{height:8px;background:var(--bd);border-radius:9px;overflow:hidden;margin:10px 0}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));transition:width .3s}
+.tag{display:inline-block;padding:2px 10px;border-radius:99px;font-size:14px;font-weight:700;color:#fff}
+.A{background:var(--ac2)}.S{background:var(--ac)}
+.opt{display:block;width:100%;text-align:left;margin:8px 0}
+.ok{border-color:var(--ok)!important;background:color-mix(in srgb,var(--ok) 18%,var(--card))}
+.no{border-color:var(--bad)!important;background:color-mix(in srgb,var(--bad) 18%,var(--card))}
+.ex{border-left:5px solid var(--ac2);padding:6px 12px;margin:8px 0;background:color-mix(in srgb,var(--ac2) 10%,transparent);border-radius:8px}
+.st{border-left-color:var(--ac);background:color-mix(in srgb,var(--ac) 10%,transparent)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chips span{background:var(--bd);padding:3px 10px;border-radius:99px;font-size:15px}
+table{width:100%;border-collapse:collapse;font-size:15px}td,th{border-bottom:1px solid var(--bd);padding:8px 4px;text-align:left;vertical-align:top}
+.big{font-size:84px;font-weight:800;text-align:center;color:var(--ac);line-height:1.1;margin:10px 0}
+.hide{display:none}.c{text-align:center}
+.sh{display:flex;align-items:center;justify-content:space-between;gap:10px}.sh button{flex:0 0 auto;min-height:40px;padding:6px 12px;font-size:15px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:10px 18px;border-radius:99px;font-size:15px;z-index:20;max-width:90%;text-align:center}
+a.t{color:var(--mu);font-size:14px;text-decoration:underline;cursor:pointer}
+</style></head><body><main>
+
+<section id="land">
+<div class="c" style="font-size:56px">🧪</div>
+<h1 class="c">Verb Lab: Action or State?</h1>
+<p class="c mu">A 15-minute interactive lesson for 2APIC. Use your phone, follow the steps, and be ready: the teacher may pick YOU at random!</p>
+<div class="card">
+<h2>Join the class</h2>
+<p class="mu">Choose your class and your number on the register.</p>
+<div class="row"><select id="cls"><option value="26">2APIC 1</option><option value="25">2APIC 2</option></select><select id="num"></select></div>
+<div class="row"><button class="p" id="go">Start the lesson →</button></div>
+</div>
+<div class="card c"><h2>Studying from home?</h2><p class="mu">Send this lesson to a classmate, or to yourself, to open it from a distance.</p><div class="row"><button class="p" id="share1">🔗 Share this lesson</button></div></div>
+<p class="c"><a class="t" id="tlink">Teacher mode</a></p>
+</section>
+
+<section id="lesson" class="hide">
+<div class="sh"><div class="mu" id="who"></div><button id="share2">🔗 Share</button></div><div class="bar"><i id="pb"></i></div>
+<div id="step"></div>
+<div class="row"><button id="back">← Back</button><button class="p" id="next">Next →</button></div>
+</section>
+
+<section id="teacher" class="hide">
+<h1>🎲 Random student picker</h1>
+<div class="card"><p class="mu">Show this on the projector. Nobody is picked twice until the whole class has had a turn.</p>
+<div class="row"><select id="tcls"><option value="26">2APIC 1 (26)</option><option value="25">2APIC 2 (25)</option></select></div>
+<div class="big" id="pick">?</div>
+<p class="c mu" id="left"></p>
+<div class="row"><button class="p" id="roll">Pick a student</button><button id="reset">Reset</button></div>
+<p class="mu">Already picked:</p><div class="chips" id="hist"></div></div>
+<div class="row"><button id="tback">← Back to the lesson page</button></div>
+</section>
+</main>
+
+<script>
+var $=function(i){return document.getElementById(i)};
+var me={cls:"2APIC 1",n:1},cur=0;
+function fill(sel,n){var h="";for(var i=1;i<=n;i++)h+="<option>"+i+"</option>";sel.innerHTML=h}
+fill($("num"),26);
+$("cls").onchange=function(){fill($("num"),+$("cls").value)};
+function show(id){["land","lesson","teacher"].forEach(function(s){$(s).classList.toggle("hide",s!==id)});window.scrollTo(0,0)}
+
+/* ---------- Lesson content ---------- */
+var tag=function(t){return '<span class="tag '+t[0]+'">'+(t=="A"?"Action":"State")+'</span>'};
+var drill=[["run","A"],["know","S"],["write","A"],["love","S"],["jump","A"],["believe","S"],["cook","A"],["need","S"],["own","S"],["swim","A"]];
+var steps=[
+{t:"1 · Warm-up",h:function(){return '<div class="card"><h2>Two sentences, one big difference</h2><div class="ex">Sara <b>is running</b> in the park.</div><div class="ex st">Sara <b>knows</b> the answer.</div><p>Can you <i>see</i> “running”? Yes! Can you <i>see</i> “knowing”? No, it happens in the mind.</p><p class="mu">Today you will learn to tell them apart, and to spot the tricky verbs that can be both.</p></div>'}},
+{t:"2 · Action verbs",h:function(){return '<div class="card"><h2>'+tag("A")+' Action (dynamic) verbs</h2><p>They describe things we <b>do</b>: physical, visible, with a start and an end.</p><div class="chips"><span>run</span><span>eat</span><span>write</span><span>jump</span><span>cook</span><span>play</span><span>open</span></div><div class="ex">Tom <b>is eating</b> lunch right now. ✅</div><div class="ex">We <b>are studying</b> English this week. ✅</div><p><b>Superpower:</b> they can be used in the <u>continuous</u> form (be + -ing).</p></div>'}},
+{t:"3 · Stative verbs",h:function(){return '<div class="card"><h2>'+tag("S")+' Stative verbs</h2><p>They describe <b>states</b>, not actions. Four families:</p><table><tr><td><b>Thoughts</b></td><td>know, believe, understand, remember, doubt</td></tr><tr><td><b>Feelings</b></td><td>love, hate, like, prefer, want, need</td></tr><tr><td><b>Senses</b></td><td>seem, sound, smell, taste, appear</td></tr><tr><td><b>Possession</b></td><td>own, belong, have, contain, cost</td></tr></table><div class="ex st">I <b>love</b> pizza. ✅</div><div class="ex st">I <b>am loving</b> pizza. ❌</div><p><b>Rule:</b> stative verbs are normally used in the <u>simple</u> form, not the continuous.</p></div>'}},
+{t:"4 · The test",h:function(){return '<div class="card"><h2>🔎 The 2-second test</h2><p>Put the verb in the continuous form and ask:</p><ol><li>Can I <b>see or film</b> it happening?</li><li>Can I <b>stop and restart</b> it?</li></ol><p>Yes → action verb. No → probably stative.</p><div class="ex">“He is <b>swimming</b>” → I can film it ✅ action</div><div class="ex st">“He is <b>believing</b>” → I cannot film it ❌ stative</div></div>'}},
+{t:"5 · Exceptions",h:function(){return '<div class="card"><h2>⚠️ Verbs with two lives</h2><p>Some verbs are stative with one meaning and action with another.</p><table><tr><th>Verb</th><th>State</th><th>Action</th></tr><tr><td>have</td><td>I <b>have</b> a bike. (own)</td><td>I <b>am having</b> lunch. (eat)</td></tr><tr><td>think</td><td>I <b>think</b> it’s fun. (opinion)</td><td>I <b>am thinking</b> about it. (process)</td></tr><tr><td>see</td><td>I <b>see</b> a bird. (perceive)</td><td>I <b>am seeing</b> a doctor. (meet)</td></tr><tr><td>taste</td><td>It <b>tastes</b> great.</td><td>He <b>is tasting</b> the soup.</td></tr><tr><td>smell</td><td>It <b>smells</b> good.</td><td>She <b>is smelling</b> the rose.</td></tr><tr><td>be</td><td>He <b>is</b> kind. (nature)</td><td>He <b>is being</b> rude today. (behaving)</td></tr></table><p class="mu">Bonus: “I’m loving it” is advertising slang, not standard grammar. 😉</p></div>'}},
+{t:"6 · Quick drill",h:function(){return '<div class="card"><h2>⚡ Tap: Action or State?</h2><p class="mu">Score: <b id="ds">0</b> / '+drill.length+'</p><div id="dw" class="c" style="font-size:42px;font-weight:800;margin:14px 0"></div><div class="row"><button id="da">Action</button><button id="dst">State</button></div><p id="df" class="c"></p></div>'},init:function(){var i=0,s=0,w=$("dw");function nx(){if(i>=drill.length){w.textContent="🎉 Done!";$("da").disabled=$("dst").disabled=true;return}w.textContent=drill[i][0]}function ans(k){if(i>=drill.length)return;var r=drill[i][1]==k;if(r)s++;$("ds").textContent=s;$("df").textContent=r?"✅ Correct!":"❌ It’s "+(drill[i][1]=="A"?"an action":"a state")+" verb.";i++;nx()}$("da").onclick=function(){ans("A")};$("dst").onclick=function(){ans("S")};nx()}},
+{t:"7 · Final quiz",h:function(){return '<div id="qz"></div>'},init:quiz}
+];
+
+/* ---------- Quiz ---------- */
+var Q=[
+["I ___ you. I’m sure of it.",["am believing","believe"],1,"“Believe” is stative (thought)."],
+["Look! The kids ___ in the garden.",["play","are playing"],1,"A visible action in progress: continuous."],
+["Which verb is stative?",["jump","write","own","cook"],2,"“Own” = possession."],
+["They ___ dinner at the moment.",["have","are having"],1,"“Have” = eat → action, so continuous is OK."],
+["This soup ___ delicious.",["is tasting","tastes"],1,"Sense verb describing a quality: stative."],
+["The chef ___ the soup right now.",["tastes","is tasting"],1,"The chef performs an action."],
+["Spot the correct sentence.",["I am wanting a new phone.","I want a new phone."],1,"“Want” is a feeling: stative."],
+["I ___ about my holiday plans.",["think","am thinking"],1,"Thinking = mental process (action)."]
+];
+function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function quiz(){
+var qs=shuf(Q),i=0,sc=0,box=$("qz");
+function ask(){
+ var q=qs[i];
+ box.innerHTML='<div class="card"><h2>📝 Question '+(i+1)+' / '+qs.length+'</h2><p><b>'+q[0]+'</b></p><div id="os"></div><p id="fb"></p></div>';
+ shuf(q[1].map(function(o,k){return{o:o,k:k}})).forEach(function(x){
+  var b=document.createElement("button");b.className="opt";b.textContent=x.o;
+  b.onclick=function(){
+   var all=$("os").children;for(var m=0;m<all.length;m++)all[m].disabled=true;
+   var good=x.k==q[2];if(good)sc++;b.classList.add(good?"ok":"no");
+   if(!good){for(var m=0;m<all.length;m++)if(all[m].textContent==q[1][q[2]])all[m].classList.add("ok")}
+   $("fb").innerHTML=(good?"✅ ":"❌ ")+q[3]+'<div class="row"><button class="p" id="nq">'+(i==qs.length-1?"See my score":"Next question →")+'</button></div>';
+   $("nq").onclick=function(){i++;i<qs.length?ask():end()};
+  };$("os").appendChild(b)})
+}
+function end(){
+ var p=Math.round(sc/qs.length*100),m=p>=88?"🏆 Verb master!":p>=63?"👏 Well done!":"💪 Review the exceptions and try again!";
+ box.innerHTML='<div class="card c"><h2>'+m+'</h2><div class="big">'+sc+' / '+qs.length+'</div><p class="mu">'+me.cls+' · No. '+me.n+'</p><p>Show this screen to your teacher.</p><div class="row"><button class="p" id="rt">Retry quiz</button></div></div>';
+ $("rt").onclick=quiz;
+}
+ask()}
+
+/* ---------- Navigation ---------- */
+function render(){
+ var s=steps[cur];$("step").innerHTML='<div class="mu">'+s.t+'</div>'+s.h();if(s.init)s.init();
+ $("pb").style.width=((cur+1)/steps.length*100)+"%";
+ $("back").disabled=cur==0;$("next").style.display=cur==steps.length-1?"none":"";window.scrollTo(0,0)}
+$("go").onclick=function(){var c=$("cls");me={cls:c.options[c.selectedIndex].text,n:$("num").value};
+ $("who").textContent="👋 "+me.cls+" · No. "+me.n;cur=0;show("lesson");render()};
+$("next").onclick=function(){if(cur<steps.length-1){cur++;render()}};
+$("back").onclick=function(){if(cur>0){cur--;render()}};
+
+/* ---------- Share link ---------- */
+var tt;function toast(m){var t=$("toast");if(!t){t=document.createElement("div");t.id="toast";t.className="toast hide";document.body.appendChild(t)}t.textContent=m;t.classList.remove("hide");clearTimeout(tt);tt=setTimeout(function(){t.classList.add("hide")},2600)}
+function copyLink(u){var ok=function(){toast("✅ Link copied! Paste it in WhatsApp or a message.")};
+ try{navigator.clipboard.writeText(u).then(ok,function(){window.prompt("Copy this link:",u)})}catch(e){window.prompt("Copy this link:",u)}}
+function shareLink(){var u=location.href.split("#")[0];
+ if(navigator.share){navigator.share({title:"Verb Lab: Action or State?",text:"Join our English lesson on stative and action verbs:",url:u}).catch(function(e){if(!e||e.name!=="AbortError")copyLink(u)})}else copyLink(u)}
+$("share1").onclick=shareLink;$("share2").onclick=shareLink;
+
+/* ---------- Teacher picker ---------- */
+var done={"26":[],"25":[]};
+function tUpd(){var k=$("tcls").value;$("hist").innerHTML=done[k].map(function(n){return"<span>"+n+"</span>"}).join("");$("left").textContent=(+k-done[k].length)+" students left in this round"}
+$("tlink").onclick=function(){show("teacher");tUpd()};
+$("tback").onclick=function(){show("land")};
+$("tcls").onchange=function(){$("pick").textContent="?";tUpd()};
+$("reset").onclick=function(){done[$("tcls").value]=[];$("pick").textContent="?";tUpd()};
+$("roll").onclick=function(){
+ var k=$("tcls").value,n=+k;if(done[k].length>=n)done[k]=[];
+ var pool=[];for(var i=1;i<=n;i++)if(done[k].indexOf(i)<0)pool.push(i);
+ var pick=pool[Math.floor(Math.random()*pool.length)],t=0,b=$("roll");b.disabled=true;
+ var iv=setInterval(function(){$("pick").textContent=1+Math.floor(Math.random()*n);if(++t>14){clearInterval(iv);$("pick").textContent=pick;done[k].push(pick);b.disabled=false;tUpd()}},70)};
+</script></body></html>
